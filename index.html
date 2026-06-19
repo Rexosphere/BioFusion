@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rexosphere Pneumonia AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght@300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <span class="material-symbols-outlined brand-icon">medical_services</span>
+          <div>
+            <strong>Rexosphere</strong>
+            <span>Pneumonia AI</span>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Main navigation">
+          <button class="nav-item active" data-target="upload-screen"><span class="material-symbols-outlined">upload_file</span>Upload & Diagnose</button>
+          <button class="nav-item" data-target="results-screen"><span class="material-symbols-outlined">clinical_notes</span>Diagnosis Result</button>
+          <button class="nav-item" data-target="gradcam-screen"><span class="material-symbols-outlined">visibility</span>Grad-CAM</button>
+          <button class="nav-item" data-target="performance-screen"><span class="material-symbols-outlined">monitoring</span>Model Performance</button>
+          <button class="nav-item" data-target="training-screen"><span class="material-symbols-outlined">model_training</span>Training Method</button>
+          <button class="nav-item" data-target="dataset-screen"><span class="material-symbols-outlined">database</span>Dataset</button>
+          <button class="nav-item" data-target="robustness-screen"><span class="material-symbols-outlined">verified</span>Robustness & Quality</button>
+          <button class="nav-item" data-target="research-screen"><span class="material-symbols-outlined">science</span>Research</button>
+          <button class="nav-item" data-target="settings-screen"><span class="material-symbols-outlined">settings</span>Settings/About</button>
+        </nav>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <button class="icon-button mobile-only" id="menu-toggle" aria-label="Open navigation"><span class="material-symbols-outlined">menu</span></button>
+          <div>
+            <p class="eyebrow">BioFusion Hackathon 2026</p>
+            <h1>Explainable Pneumonia Detection Using Two-Phase Fine-Tuned DenseNet121</h1>
+          </div>
+          <button class="theme-toggle" id="theme-toggle" type="button">
+            <span class="material-symbols-outlined">dark_mode</span>
+            <span>Theme</span>
+          </button>
+        </header>
+
+        <main class="main-content">
+          <section class="screen active" id="upload-screen">
+            <div class="screen-heading">
+              <div>
+                <p class="eyebrow">Clinical workspace</p>
+                <h2>Upload Chest X-Ray</h2>
+              </div>
+              <span class="status-pill neutral" id="backend-status">Backend not checked</span>
+            </div>
+
+            <div class="upload-layout">
+              <article class="panel upload-panel">
+                <label class="dropzone" for="xray-input" id="dropzone">
+                  <input id="xray-input" type="file" accept="image/*" />
+                  <span class="material-symbols-outlined">add_photo_alternate</span>
+                  <strong>Choose a chest X-ray image</strong>
+                  <small>PNG, JPG, or JPEG. The image is only sent when diagnosis is started.</small>
+                </label>
+                <div class="preview-frame empty" id="preview-frame">
+                  <img id="preview-image" alt="Uploaded chest X-ray preview" />
+                  <div class="empty-state" id="preview-empty">
+                    <span class="material-symbols-outlined">image_search</span>
+                    <p>No image selected</p>
+                  </div>
+                </div>
+                <div class="button-row">
+                  <button class="primary-button" id="diagnose-button" disabled>
+                    <span class="material-symbols-outlined" id="diagnose-icon">psychology</span>
+                    <span id="diagnose-label">Run Diagnosis</span>
+                  </button>
+                  <button class="ghost-button" id="clear-button" disabled>
+                    <span class="material-symbols-outlined">close</span>
+                    Clear
+                  </button>
+                </div>
+                <p class="error-message" id="diagnosis-error" role="alert"></p>
+              </article>
+
+              <aside class="panel workflow-panel">
+                <h3>Inference Contract</h3>
+                <div class="contract-list">
+                  <div><span>Expected endpoint</span><code>POST /api/diagnose</code></div>
+                  <div><span>Request field</span><code>image</code></div>
+                  <div><span>Optional result fields</span><code>class, confidence, threshold, inferenceTimeMs, recommendation, gradcamOverlayUrl, gradcamHeatmapUrl</code></div>
+                </div>
+                <div class="disclaimer">
+                  <span class="material-symbols-outlined">health_and_safety</span>
+                  <p>This tool is decision support only. It must not be used as a standalone medical diagnosis.</p>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="screen" id="results-screen">
+            <div class="screen-heading">
+              <div>
+                <p class="eyebrow">Inference output</p>
+                <h2>Diagnosis Result</h2>
+              </div>
+            </div>
+            <div class="result-grid">
+              <article class="panel result-card">
+                <span class="material-symbols-outlined result-icon" id="result-icon">pending</span>
+                <p class="eyebrow">Prediction class</p>
+                <h3 id="result-class">Not available</h3>
+                <p id="result-recommendation">Run a backend-connected diagnosis to populate this screen.</p>
+              </article>
+              <article class="panel metrics-panel">
+                <div class="metric-row"><span>Confidence / probability</span><strong id="result-confidence">Not available</strong></div>
+                <div class="metric-row"><span>Decision threshold</span><strong id="result-threshold">Not available</strong></div>
+                <div class="metric-row"><span>Inference time</span><strong id="result-time">Not available</strong></div>
+              </article>
+            </div>
+            <article class="panel disclaimer wide">
+              <span class="material-symbols-outlined">warning</span>
+              <p>Model output is not medical certainty. A qualified clinician should review the X-ray, patient history, and any additional tests before making a diagnosis.</p>
+            </article>
+          </section>
+
+          <section class="screen" id="gradcam-screen">
+            <div class="screen-heading">
+              <div>
+                <p class="eyebrow">Explainability</p>
+                <h2>Grad-CAM Explainability</h2>
+              </div>
+            </div>
+            <div class="gradcam-layout">
+              <article class="panel image-stage">
+                <div class="cam-canvas" id="cam-canvas">
+                  <img id="cam-original" alt="Original X-ray" />
+                  <img id="cam-overlay" alt="Grad-CAM overlay" />
+                  <img id="cam-heatmap" alt="Grad-CAM heatmap" />
+                  <div class="empty-state" id="cam-empty">
+                    <span class="material-symbols-outlined">visibility_off</span>
+                    <p>Grad-CAM output is not available yet.</p>
+                  </div>
+                </div>
+              </article>
+              <aside class="panel controls-panel">
+                <h3>View Controls</h3>
+                <label for="opacity-slider">Overlay opacity</label>
+                <input id="opacity-slider" type="range" min="0" max="100" value="55" />
+                <div class="segmented-control" role="group" aria-label="Grad-CAM view mode">
+                  <button class="active" data-cam-mode="overlay">Overlay</button>
+                  <button data-cam-mode="original">Original</button>
+                  <button data-cam-mode="heatmap">Heatmap</button>
+                </div>
+                <p class="muted">Heatmaps are displayed only when returned by the backend. No synthetic attention maps are generated in the frontend.</p>
+              </aside>
+            </div>
+          </section>
+
+          <section class="screen" id="performance-screen">
+            <div class="screen-heading"><div><p class="eyebrow">Validation</p><h2>Model Performance</h2></div></div>
+            <div class="metric-cards" id="performance-cards"></div>
+            <article class="panel">
+              <h3>Evaluation Notes</h3>
+              <p>Metrics are loaded from the trained DenseNet121 evaluation results saved in config/model_metrics.json.</p>
+            </article>
+          </section>
+
+          <section class="screen" id="training-screen">
+            <div class="screen-heading"><div><p class="eyebrow">Method</p><h2>Training Method</h2></div></div>
+            <div class="timeline">
+              <article class="panel"><span>Phase 1</span><h3>Frozen DenseNet121 backbone</h3><p>Train classifier head during epochs 1-10 with learning rate 0.001.</p></article>
+              <article class="panel"><span>Phase 2</span><h3>Fine-tune denseblock4 + transition3</h3><p>Unfreeze the final feature block during epochs 11-20 with learning rate 0.0001.</p></article>
+            </div>
+            <div class="process-grid">
+              <article class="panel"><span class="material-symbols-outlined">input</span><h3>Forward pass</h3><p>Image tensor flows through DenseNet121 and classifier head.</p></article>
+              <article class="panel"><span class="material-symbols-outlined">functions</span><h3>Loss computation</h3><p>Cross-entropy compares logits with Normal/Pneumonia labels.</p></article>
+              <article class="panel"><span class="material-symbols-outlined">schema</span><h3>Backpropagation</h3><p>Gradients are computed for trainable parameters.</p></article>
+              <article class="panel"><span class="material-symbols-outlined">sync</span><h3>Optimizer update</h3><p>Adam updates the classifier head or unfrozen layers by phase.</p></article>
+            </div>
+          </section>
+
+          <section class="screen" id="dataset-screen">
+            <div class="screen-heading"><div><p class="eyebrow">Data</p><h2>Dataset</h2></div></div>
+            <div class="dataset-grid">
+              <article class="panel stat"><strong>5,863</strong><span>Pediatric chest X-ray images</span></article>
+              <article class="panel stat"><strong>1,590</strong><span>Normal</span></article>
+              <article class="panel stat"><strong>4,273</strong><span>Pneumonia</span></article>
+              <article class="panel stat"><strong>624</strong><span>Test images</span></article>
+            </div>
+            <article class="panel">
+              <h3>Preprocessing</h3>
+              <ul class="clean-list">
+                <li>Train split: 80%; validation split: 20%.</li>
+                <li>Resize to 224x224.</li>
+                <li>Grayscale converted to RGB for pretrained DenseNet121.</li>
+                <li>ImageNet normalization.</li>
+                <li>Minimal augmentation for clinically realistic variation.</li>
+              </ul>
+            </article>
+          </section>
+
+          <section class="screen" id="robustness-screen">
+            <div class="screen-heading"><div><p class="eyebrow">Safety checks</p><h2>Robustness & Quality</h2></div></div>
+            <div class="process-grid">
+              <article class="panel"><h3>Noise and blur</h3><p>Robustness testing covers Gaussian noise, blur, and downscale-upscale degradation.</p></article>
+              <article class="panel"><h3>Data validation</h3><p>Dataset quality checks should verify file integrity, labels, split isolation, and preprocessing consistency.</p></article>
+              <article class="panel"><h3>Threshold tuning</h3><p>Recall-focused threshold selection is documented to reduce missed pneumonia cases in triage context.</p></article>
+              <article class="panel"><h3>Clinical scope</h3><p>Pediatric dataset limitations and deployment constraints must be disclosed before real-world use.</p></article>
+            </div>
+          </section>
+
+          <section class="screen" id="research-screen">
+            <div class="screen-heading"><div><p class="eyebrow">Background</p><h2>Research</h2></div></div>
+            <div class="research-grid">
+              <article class="panel"><h3>DenseNet121</h3><p>Dense connections support feature reuse and stable gradient flow for image classification.</p></article>
+              <article class="panel"><h3>CheXNet inspiration</h3><p>The project follows the precedent of DenseNet-based chest X-ray pneumonia detection.</p></article>
+              <article class="panel"><h3>Kermany dataset</h3><p>Pediatric chest X-rays from the Kermany pneumonia dataset define the classification task.</p></article>
+              <article class="panel"><h3>Grad-CAM explainability</h3><p>Visual attention maps help reviewers inspect regions that influenced predictions.</p></article>
+              <article class="panel"><h3>Recall-focused threshold tuning</h3><p>Thresholding emphasizes sensitivity for screening and triage use cases.</p></article>
+              <article class="panel"><h3>Robustness and quality</h3><p>Degradation testing and data validation document model limits and reliability.</p></article>
+            </div>
+          </section>
+
+          <section class="screen" id="settings-screen">
+            <div class="screen-heading"><div><p class="eyebrow">Project</p><h2>Settings/About</h2></div></div>
+            <div class="about-layout">
+              <article class="panel">
+                <h3>Team Rexosphere</h3>
+                <p>BioFusion Hackathon 2026 project for explainable pediatric chest X-ray pneumonia screening.</p>
+                <div class="contract-list">
+                  <div><span>Model</span><strong>DenseNet121</strong></div>
+                  <div><span>Training</span><strong>Two-phase fine-tuning</strong></div>
+                  <div><span>Explainability</span><strong>Grad-CAM</strong></div>
+                </div>
+              </article>
+              <article class="panel">
+                <h3>API Settings</h3>
+                <label for="endpoint-input">Diagnosis endpoint</label>
+                <input id="endpoint-input" type="text" value="/api/diagnose" />
+                <p class="muted">Change this if your backend exposes inference at a different route.</p>
+              </article>
+            </div>
+          </section>
+        </main>
+
+        <footer class="app-footer">
+          AI triage support only. Final diagnosis should be made by a medical professional.
+        </footer>
+      </div>
+    </div>
+    <script src="assets/app.js"></script>
+  </body>
+</html>
